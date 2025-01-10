@@ -136,12 +136,16 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        if validate_login(username, password):
+        req = validate_login(username, password)[1]
+        if req=="fine":
             session["logged_in"] = True
             session["username"] = username
             return redirect(url_for("home"))
-        else:
+        elif req=="wrong":
             error_msg = "שם המשתמש או הסיסמה שגויים"
+            return render_template("login.html", error=error_msg)
+        else:
+            error_msg = "בעיה לא צפויה"
             return render_template("login.html", error=error_msg)
 
     return render_template("login.html")
