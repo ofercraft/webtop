@@ -140,7 +140,9 @@ def login():
         if req[1]=="fine":
             session["logged_in"] = True
             session["username"] = username
-            session["info"]=req[2]
+            session["cookies"]=req[2][0]
+            session["student_id"]=req[2][1]
+
             # session["student_id"]=req[3]
             # session["info"]=req[4]
             # session["class_code"]=req[5]
