@@ -139,7 +139,6 @@ class WebtopUser:
             studyYear=date.today().year, moduleID=1, periodID=period_id, studentID=self.student_id)
         response: Response = requests.post(url, json=data, headers={}, cookies=self.cookies, verify=False)
         grades: dict = {}
-
         for i in response.json()["data"]:
             if i["grade"] is not None:
                 if i["subject"] not in grades:
@@ -147,7 +146,40 @@ class WebtopUser:
                 grades[i["subject"]][i["title"]] = [i["grade"], i["weight"]]
 
         return grades
+    def get_grades1(self, period="a"):
+        """
+        Get a webtop account's grades.
 
+        Args:
+            self: the user object.
+            period: the year period (a, b, or ab).
+
+        Returns:
+            boolean: True if the webtop account exists, False otherwise.
+        """
+        if period not in ("a", "b", "ab"):
+            raise Except(message="the period must be a, b, or ab")
+
+        url = "https://webtopserver.smartschool.co.il/server/api/PupilCard/GetPupilGrades"
+        period_id: int = 1103 if period == "a" else 1102 if period == "b" else 0
+        data: dict = dict(
+            studyYear=date.today().year, moduleID=1, periodID=period_id, studentID=self.student_id)
+        response: Response = requests.post(url, json=data, headers={}, cookies=self.cookies, verify=False)
+        grades = []
+
+        for i in response.json()["data"]:
+            if i["grade"] is not None:
+                grades.append(
+                    {
+                        "date": i["date"],
+                        "subject": i["subject"],
+                        "exam_type": i["type"],
+                        "grade": i["grade"],
+                        "notes": i["gradeTranslation"]
+                    }
+                )
+
+        return grades
     def get_grades_list(self, period="b"):
         """
         Get a webtop account's grades, in a list.
@@ -581,7 +613,7 @@ if __name__ == "__main__":
         elif task == 1:
             print(user.login_get_info())
         elif task == 2:
-            print(user.get_grades())
+            print(user.get_grades1())
         elif task == 3:
             print(user.get_average())
         elif task == 4:
