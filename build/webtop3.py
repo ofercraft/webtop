@@ -18,6 +18,77 @@ import base64
 import webbrowser
 
 
+def get_schedule(cookies, grade, institution):
+    """
+    Get a webtop user's weekly schedule, including this week's changes.
+
+    Args:
+        self: The user object.
+        grade: the grade to get schedule.
+        institution: the institution of the grade.
+
+    Returns:
+        dict: containing the weekly schedule.
+    """
+
+    url = "https://webtopserver.smartschool.co.il/server/api/shotef/ShotefSchedualeData"  # The endpoint url.
+    data = {  # The request data.
+        "institutionCode": institution,
+        "selectedValue": grade,
+        "typeView": 2
+    }
+    colors={"מתמטיקה האצה": "lightgreen-cell", "מדעים": "lightyellow-cell",
+            "של``ח": "lightgreen-cell", "חינוך": "pink-cell", "arabic": "lightblue-cell", "היסטוריה": "lightred-cell",
+            "עברית": "lightpurple-cell", "חינוך גופני": "lightred-cell", "נחשון": "lightyellow-cell", "ספרות": "lightgrey-cell", "תנ``ך": "lightgrey-cell"
+    }
+    print(type(cookies))
+
+    # Parse raw cookie string into a dictionary
+    cookies_dict = dict(cookie.split('=') for cookie in cookies.split('; '))
+
+    # Convert the dictionary into a RequestsCookieJar
+    cookies_jar = requests.utils.cookiejar_from_dict(cookies_dict)
+
+    response = requests.post(url, json=data, headers={}, cookies=cookies_jar, verify=False)
+    #print(response.json())
+    schedule = [
+        [
+
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        [
+
+        ],
+        [
+        ],
+        [
+        ],
+        [
+        ],
+
+    ]
+    for day in response.json()["data"]:  # Go through all the days in the response.
+        day1 = {}
+        for hour in day["hoursData"]:  # Go through all the hours in the day.
+            if hour["scheduale"]:
+                #print(hour)
+                if hour["scheduale"][0]["subject"] in colors:
+                    color = colors[hour["scheduale"][0]["subject"]]
+                else:
+                    color = "lightyellow-cell"
+                #print(hour["hour"]-1)
+                schedule[hour["hour"]-1].append((hour["scheduale"][0]["subject"], hour["scheduale"][0]["teacherPrivateName"]+" "+hour["scheduale"][0]["teacherLastName"],  color))
+    return schedule  # Return the schedule.
+
+
 def get_grades1(cookies, student_id):
     """
     Get a webtop account's grades.
@@ -542,6 +613,7 @@ class WebtopUser:
             day1 = {}
             for hour in day["hoursData"]:  # Go through all the hours in the day.
                 if hour["scheduale"]:
+                    print(hour)
                     day1[str(hour["hour"])] = hour["scheduale"][0]["subject"]  # Add the hour information to the json.
                     if hour["scheduale"][0]["changes"]:
                         day1[str(hour["hour"])] += hour["scheduale"][0]["changes"][0]["type"]
@@ -638,7 +710,9 @@ class WebtopUser:
 
 
 if __name__ == "__main__":
-    validate_login("ETD395", "Adaradir11")
+    info = validate_login("ETD395", "Adaradir11")
+    print(    get_schedule(info[2][1], info[2][3], info[2][4])
+)
     # username = input("enter username -->\n")
     # if username == "" or username == "ofer":
     #     username = "AHYC52"
