@@ -18,6 +18,37 @@ import base64
 import webbrowser
 
 
+def get_grades1(cookies, student_id):
+    """
+    Get a webtop account's grades.
+
+    Args:
+        self: the user object.
+        period: the year period (a, b, or ab).
+
+    Returns:
+        boolean: True if the webtop account exists, False otherwise.
+    """
+
+    url = "https://webtopserver.smartschool.co.il/server/api/PupilCard/GetPupilGrades"
+    data: dict = dict(
+        studyYear=date.today().year, moduleID=1, periodID=1103, studentID=student_id)
+    response: Response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
+    grades = []
+    print(response.json())
+    for i in response.json()["data"]:
+        if i["grade"] is not None:
+            grades.append(
+                {
+                    "date": i["date"],
+                    "subject": i["subject"],
+                    "exam_type": i["type"],
+                    "grade": i["grade"],
+                    "notes": i["gradeTranslation"]
+                }
+            )
+
+    return grades
 def encrypt_string_to_server(data, smart_key="01234567890000000150778345678901"):
     key_size = 256
     salt = get_random_bytes(16)
@@ -72,7 +103,8 @@ def validate_login(username: str, password: str):
         return False, "error", None
     if (response.json()["errorDescription"]=="User Name or Password incorrect"):
         return False, "wrong", None
-    return True, "fine", cookies, student_id, info, class_code, institution
+    return True, "fine", [cookies, student_id, info, class_code, institution]
+
 class WebtopUser:
     def __init__(self, username, password: str="cookies"):
         """
@@ -174,11 +206,12 @@ class WebtopUser:
 
         url = "https://webtopserver.smartschool.co.il/server/api/PupilCard/GetPupilGrades"
         period_id: int = 1103 if period == "a" else 1102 if period == "b" else 0
+        print(type(self.student_id))
         data: dict = dict(
-            studyYear=date.today().year, moduleID=1, periodID=period_id, studentID=self.student_id)
+            studyYear=date.today().year, moduleID=1, periodID=period_id, studentID="saad")
         response: Response = requests.post(url, json=data, headers={}, cookies=self.cookies, verify=False)
         grades = []
-
+        print(response.json())
         for i in response.json()["data"]:
             if i["grade"] is not None:
                 grades.append(
@@ -596,6 +629,7 @@ class WebtopUser:
 
 
 if __name__ == "__main__":
+    #validate_login("AHYC52", "")
     username = input("enter username -->\n")
     if username == "" or username == "ofer":
         username = "AHYC52"
