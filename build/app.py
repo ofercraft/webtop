@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from webtop3 import WebtopUser
+from webtop3 import WebtopUser, validate_login
 app = Flask(__name__)
 app.secret_key = "YOUR_SECRET_KEY_HERE"  # Replace with a strong random string
 
@@ -136,7 +136,7 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        if username == VALID_USERNAME and password == VALID_PASSWORD:
+        if validate_login(username, password):
             session["logged_in"] = True
             session["username"] = username
             return redirect(url_for("home"))
