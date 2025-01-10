@@ -64,14 +64,17 @@ def validate_login(username: str, password: str):
     try:
         response = requests.post(url, json=data, verify=False)
         cookies = response.cookies  # get the response cookies.
-
+        student_id = response.json()["data"]["userId"]  # pull the student id from the response json
+        info = response.json()["data"]  # get info about the user, from the response.
+        class_code = f"{response.json()['data']['classCode']}|{str(response.json()['data']['classNumber'])}"
+        institution = response.json()["data"]["institutionCode"]
     except:
         return False, "error", None
     if (response.json()["errorDescription"]=="User Name or Password incorrect"):
         return False, "wrong", None
-    return True, "fine", cookies
+    return True, "fine", cookies, student_id, info, class_code, institution
 class WebtopUser:
-    def __init__(self, username: str, password: str="cookies"):
+    def __init__(self, username, password: str="cookies"):
         """
         an unofficial webtop api, to get much information like: grades, schedule, average, and more.
         this function initialises a webtop user,
@@ -84,7 +87,11 @@ class WebtopUser:
             None.
         """
         if(password=="cookies"):
-            self.cookies = username
+            self.cookies = username[0]
+            self.student_id = username[1]
+            self.info = username[2]
+            self.class_code = username[3]
+            self.institution = username[4]
         else:
 
             data = encrypt_string_to_server(f"{username}0")  # encrypt the username to give to the database.
