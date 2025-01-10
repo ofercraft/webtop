@@ -49,7 +49,7 @@ class Except(Exception):
 
     def __init__(self, message="Invalid username / password"):
         self.message = message
-        super()._init_(self.message)
+        super().__init__(self.message)
 
 def validate_login(username: str, password: str):
 
@@ -63,11 +63,11 @@ def validate_login(username: str, password: str):
     }
     try:
         response = requests.post(url, json=data, verify=False)
-        student_id=response.json()["data"]["userId"]
-        cookies = response.cookies
-        return True
     except:
-        return False
+        return False, "error"
+    if (response.json()["errorDescription"]=="User Name or Password incorrect"):
+        return False, "wrong"
+    return True, "fine"
 class WebtopUser:
     def __init__(self, username: str, password: str):
         """
