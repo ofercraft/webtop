@@ -38,13 +38,18 @@ def get_grades1(cookies, student_id):
     print(response.json())
     for i in response.json()["data"]:
         if i["grade"] is not None:
+            if i["gradeTranslation"]==None:
+                notes = "   "
+            else:
+                notes = i["gradeTranslation"]
+
             grades.append(
                 {
-                    "date": i["date"],
+                    "date": i["date"][:10],
                     "subject": i["subject"],
                     "exam_type": i["type"],
                     "grade": i["grade"],
-                    "notes": i["gradeTranslation"]
+                    "notes": notes
                 }
             )
 
