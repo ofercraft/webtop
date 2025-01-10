@@ -48,7 +48,7 @@ def get_schedule(cookies, grade, institution):
 
     # Convert the dictionary into a RequestsCookieJar
     #cookies_jar = requests.utils.cookiejar_from_dict(cookies_dict)
-
+    
     response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
     #print(response.json())
     schedule = [
@@ -75,6 +75,7 @@ def get_schedule(cookies, grade, institution):
         ],
 
     ]
+    Except(response.json())
     for day in response.json()["data"]:  # Go through all the days in the response.
         day1 = {}
         for hour in day["hoursData"]:  # Go through all the hours in the day.
