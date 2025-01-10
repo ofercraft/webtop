@@ -44,12 +44,12 @@ def get_schedule(cookies, grade, institution):
     print(type(cookies))
 
     # Parse raw cookie string into a dictionary
-    cookies_dict = dict(cookie.split('=') for cookie in cookies.split('; '))
+    #cookies_dict = dict(cookie.split('=') for cookie in cookies.split('; '))
 
     # Convert the dictionary into a RequestsCookieJar
-    cookies_jar = requests.utils.cookiejar_from_dict(cookies_dict)
+    #cookies_jar = requests.utils.cookiejar_from_dict(cookies_dict)
 
-    response = requests.post(url, json=data, headers={}, cookies=cookies_jar, verify=False)
+    response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
     #print(response.json())
     schedule = [
         [
