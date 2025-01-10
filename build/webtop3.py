@@ -103,7 +103,9 @@ def validate_login(username: str, password: str):
         info = response.json()["data"]  # get info about the user, from the response.
         class_code = f"{response.json()['data']['classCode']}|{str(response.json()['data']['classNumber'])}"
         institution = response.json()["data"]["institutionCode"]
-    except:
+    except Exception as e:
+        print(f"An exception occurred: {e}")
+
         return False, "error", None
     if (response.json()["errorDescription"]=="User Name or Password incorrect"):
         return False, "wrong", None
