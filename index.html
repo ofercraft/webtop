@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}בית - Webtop{% endblock %}
+
+{% block content %}
+<h2>שלום, {{ username }}!</h2>
+<p>ברוך הבא לעמוד הבית של מערכת בית ספר בסגנון ישן.</p>
+<ul>
+  <li><a href="{{ url_for('schedule') }}">מערכת שעות</a></li>
+  <li><a href="{{ url_for('grades') }}">ציונים</a></li>
+  <li><a href="{{ url_for('attendance') }}">איחורים/חיסורים</a></li>
+  <li><a href="{{ url_for('student_profile') }}">כרטיס תלמיד</a></li>
+</ul>
+{% endblock %}

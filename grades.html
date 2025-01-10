@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}ציונים{% endblock %}
+
+{% block content %}
+<h2>ציונים</h2>
+<table>
+  <thead>
+    <tr>
+      <th>תאריך</th>
+      <th>מקצוע</th>
+      <th>סוג הבחינה</th>
+      <th>ציון</th>
+      <th>הערות</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in grades_data %}
+    <tr>
+      <td>{{ item.date }}</td>
+      <td>{{ item.subject }}</td>
+      <td>{{ item.exam_type }}</td>
+      <td>{{ item.grade }}</td>
+      <td>{{ item.notes }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

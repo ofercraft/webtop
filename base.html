@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <title>{% block title %}Webtop{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- Old Style Banner or Nav -->
+<div class="old-top-nav">
+  <h1>מערכת בית ספר</h1>
+  <div class="nav-links">
+    <a href="{{ url_for('home') }}">בית</a>
+    <a href="{{ url_for('schedule') }}">מערכת שעות</a>
+    <a href="{{ url_for('grades') }}">ציונים</a>
+    <a href="{{ url_for('attendance') }}">איחורים/חיסורים</a>
+    <a href="{{ url_for('student_profile') }}">כרטיס תלמיד</a>
+    <a href="{{ url_for('logout') }}">התנתק</a>
+  </div>
+</div>
+
+<div class="container">
+  {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

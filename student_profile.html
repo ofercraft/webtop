@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}כרטיס תלמיד{% endblock %}
+
+{% block content %}
+<h2>כרטיס תלמיד</h2>
+
+<div class="profile-box">
+  <h3>פרטי התלמיד</h3>
+  <p>שם התלמיד: {{ student_info.name }}</p>
+  <p>תעודת זהות: {{ student_info.id }}</p>
+  <p>טלפון: {{ student_info.phone }}</p>
+  <p>כתובת: {{ student_info.address }}</p>
+  <p>כיתה: {{ student_info.class }}</p>
+</div>
+
+<div class="profile-box">
+  <h3>פרטי הורים</h3>
+  <p>שם האב: {{ parents_info.father_name }}</p>
+  <p>טלפון האב: {{ parents_info.father_phone }}</p>
+  <p>שם האם: {{ parents_info.mother_name }}</p>
+  <p>טלפון האם: {{ parents_info.mother_phone }}</p>
+</div>
+{% endblock %}
