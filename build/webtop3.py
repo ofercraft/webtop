@@ -35,7 +35,6 @@ def get_grades1(cookies, student_id):
         studyYear=date.today().year, moduleID=1, periodID=1103, studentID=student_id)
     response: Response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
     grades = []
-    print(response.json())
     for i in response.json()["data"]:
         if i["grade"] is not None:
             if i["gradeTranslation"]==None:
