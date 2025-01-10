@@ -51,7 +51,24 @@ class Except(Exception):
         self.message = message
         super()._init_(self.message)
 
+def validate_login(username: str, password: str):
+    cookies = get_cookies()
 
+    url = "https://webtopserver.smartschool.co.il/server/api/user/LoginByUserNameAndPassword"
+    data = {
+        "Data": "09lFSU9KIBot/BiLk/kRejU7vANwHPdnOggkiUZVLsVbAfSWaZJL8fDjD9Fess5c",
+        "UserName": username,
+        "Password": password,
+        "deviceDataJson": '{"isMobile":true,"isTablet":false,"isDesktop":false,"getDeviceType":"Mobile","os":"Android","osVersion":"6.0","browser":"Chrome","browserVersion":"122.0.0.0","browserMajorVersion":122,"screen_resolution":"1232 x 840","cookies":true,"userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"}'
+
+    }
+    try:
+        response = requests.post(url, json=data, cookies=cookies, verify=False)
+        student_id=response.json()["data"]["userId"]
+        cookies = response.cookies
+        return True
+    except:
+        return False
 class WebtopUser:
     def __init__(self, username: str, password: str):
         """
@@ -89,7 +106,7 @@ class WebtopUser:
                 raise Except()
         except:
             raise Except()
-
+    
     def login_get_info(self):
         """
         get user's information
