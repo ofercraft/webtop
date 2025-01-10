@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}איחורים/חיסורים{% endblock %}
+
+{% block content %}
+<h2>איחורים / חיסורים</h2>
+<table>
+  <thead>
+    <tr>
+      <th>תאריך</th>
+      <th>יום</th>
+      <th>שעה</th>
+      <th>קבוצת לימוד</th>
+      <th>סוג אירוע</th>
+      <th>הצדקה</th>
+      <th>סיבה</th>
+      <th>הערות</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for record in attendance_data %}
+    <tr>
+      <td>{{ record.date }}</td>
+      <td>{{ record.day }}</td>
+      <td>{{ record.hour }}</td>
+      <td>{{ record.group }}</td>
+      <td>{{ record.event_type }}</td>
+      <td>{{ record.justification }}</td>
+      <td>{{ record.absence_reason }}</td>
+      <td>{{ record.comments }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

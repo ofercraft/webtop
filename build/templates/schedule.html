@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}מערכת שעות{% endblock %}
+
+{% block content %}
+<h2>מערכת שעות</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>חמישי</th>
+      <th>רביעי</th>
+      <th>שלישי</th>
+      <th>שני</th>
+      <th>ראשון</th>
+      <th>שעה</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for hour_index, row in enumerate(schedule_data) %}
+    <tr>
+      {% for col_index, cell in enumerate(row) %}
+        {% set subject, teacher, color_class = cell %}
+        <td class="{{ color_class }}">
+          <div class="subject">{{ subject }}</div>
+          <div class="teacher">{{ teacher }}</div>
+        </td>
+      {% endfor %}
+      <td class="hour-col">{{ hour_index }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
