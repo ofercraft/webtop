@@ -63,11 +63,13 @@ def validate_login(username: str, password: str):
     }
     try:
         response = requests.post(url, json=data, verify=False)
+        cookies = response.cookies  # get the response cookies.
+
     except:
-        return False, "error"
+        return False, "error", None
     if (response.json()["errorDescription"]=="User Name or Password incorrect"):
-        return False, "wrong"
-    return True, "fine"
+        return False, "wrong", None
+    return True, "fine", cookies
 class WebtopUser:
     def __init__(self, username: str, password: str):
         """
