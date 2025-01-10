@@ -89,8 +89,10 @@ class Except(Exception):
 def validate_login(username: str, password: str):
 
     url = "https://webtopserver.smartschool.co.il/server/api/user/LoginByUserNameAndPassword"
+    data = encrypt_string_to_server(f"{username}0")  # encrypt the username to give to the database.
+
     data = {
-        "Data": "09lFSU9KIBot/BiLk/kRejU7vANwHPdnOggkiUZVLsVbAfSWaZJL8fDjD9Fess5c",
+        "Data": data,
         "UserName": username,
         "Password": password,
         "deviceDataJson": '{"isMobile":true,"isTablet":false,"isDesktop":false,"getDeviceType":"Mobile","os":"Android","osVersion":"6.0","browser":"Chrome","browserVersion":"122.0.0.0","browserMajorVersion":122,"screen_resolution":"1232 x 840","cookies":true,"userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"}'
@@ -635,54 +637,54 @@ class WebtopUser:
 
 
 if __name__ == "__main__":
-    #validate_login("AHYC52", "")
-    username = input("enter username -->\n")
-    if username == "" or username == "ofer":
-        username = "AHYC52"
-    password = input("enter password -->\n")
-    if password == "" or password == "ofer":
-        password = "Neches90210"
-
-    user = WebtopUser(username, password)
-    print("0: done\n"
-          "1: get info\n"
-          "2: get grades\n"
-          "3: get average\n"
-          "4: get final grades\n"
-          "5: get notes\n"
-          "6: get homeroom notes\n"
-          "7: get schedule\n"
-          "8: get changes\n"
-          "9: get schedule pdf\n"
-          "10: get messages\n"
-          "11: get grades list\n"
-          "12: get discipline events")
-    while True:
-
-        task = int(input("select task"))
-        if task == 0:
-            break
-        elif task == 1:
-            print(user.login_get_info())
-        elif task == 2:
-            print(user.get_grades1())
-        elif task == 3:
-            print(user.get_average())
-        elif task == 4:
-            print(user.get_final_grades())
-        elif task == 5:
-            print(user.get_notes())
-        elif task == 6:
-            print(user.get_homeroom_notes())
-        elif task == 7:
-            print(user.get_schedule())
-        elif task == 8:
-            print(user.get_changes())
-        elif task == 9:
-            print(user.get_schedule_pdf())
-        elif task == 10:
-            print(user.get_messages())
-        elif task == 11:
-            print(user.get_grades_list())
-        elif task == 12:
-            print(user.get_discipline_events())
+    validate_login("ETD395", "Adaradir11")
+    # username = input("enter username -->\n")
+    # if username == "" or username == "ofer":
+    #     username = "AHYC52"
+    # password = input("enter password -->\n")
+    # if password == "" or password == "ofer":
+    #     password = "Neches90210"
+    #
+    # user = WebtopUser(username, password)
+    # print("0: done\n"
+    #       "1: get info\n"
+    #       "2: get grades\n"
+    #       "3: get average\n"
+    #       "4: get final grades\n"
+    #       "5: get notes\n"
+    #       "6: get homeroom notes\n"
+    #       "7: get schedule\n"
+    #       "8: get changes\n"
+    #       "9: get schedule pdf\n"
+    #       "10: get messages\n"
+    #       "11: get grades list\n"
+    #       "12: get discipline events")
+    # while True:
+    #
+    #     task = int(input("select task"))
+    #     if task == 0:
+    #         break
+    #     elif task == 1:
+    #         print(user.login_get_info())
+    #     elif task == 2:
+    #         print(user.get_grades1())
+    #     elif task == 3:
+    #         print(user.get_average())
+    #     elif task == 4:
+    #         print(user.get_final_grades())
+    #     elif task == 5:
+    #         print(user.get_notes())
+    #     elif task == 6:
+    #         print(user.get_homeroom_notes())
+    #     elif task == 7:
+    #         print(user.get_schedule())
+    #     elif task == 8:
+    #         print(user.get_changes())
+    #     elif task == 9:
+    #         print(user.get_schedule_pdf())
+    #     elif task == 10:
+    #         print(user.get_messages())
+    #     elif task == 11:
+    #         print(user.get_grades_list())
+    #     elif task == 12:
+    #         print(user.get_discipline_events())
