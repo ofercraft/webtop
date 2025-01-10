@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Rubik', sans-serif;
+  background: #f4f4f4;
+  direction: rtl;
+  text-align: right;
+  color: #333;
+}
+
+/*
+   ------------------------------------------------
+   OLD "TOP NAV" CLASSES (NOW TURNED INTO SIDE NAV)
+   ------------------------------------------------
+*/
+.old-top-nav {
+  background-color: #2c3e50; /* You can tweak to a more modern hue if you like */
+  color: #fff;
+  width: 240px;
+  height: 100vh;
+  position: fixed;
+  right: 0;               /* place navbar on the right side */
+  top: 0;
+  padding: 1rem;
+  overflow-y: auto;       /* scroll if content is too tall */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+  border-top-left-radius: 12px;    /* round top-left corner of nav */
+  border-bottom-left-radius: 12px; /* round bottom-left corner */
+}
+
+.old-top-nav h1 {
+  font-size: 1.2rem;
+  margin: 0 0 1rem 0;
+}
+
+/*
+   Navbar Links - stacked vertically
+*/
+.old-top-nav .nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.old-top-nav .nav-links a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.old-top-nav .nav-links a:hover {
+  background-color: rgba(255,255,255,0.15);
+  text-decoration: none;
+}
+
+/*
+   CONTAINER
+   Shift main content to the left, so navbar can occupy the right
+*/
+.container {
+  margin: 1rem auto;
+  width: 90%;
+  max-width: 1200px;
+
+  /* for the side nav */
+  margin-right: 260px;              /* space for nav width */
+  max-width: calc(100% - 260px);    /* ensure container doesn't overflow horizontally */
+
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;               /* more rounded content box */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* subtle shadow for a modern look */
+}
+
+/*
+   TABLES
+*/
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  background: #fff; /* keep table background white */
+}
+table th,
+table td {
+  text-align: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+table thead {
+  background-color: #f1f3f8;
+}
+
+/*
+   OLD DESIGN COLOR CELLS FOR SCHEDULE
+*/
+.pink-cell {
+  background-color: #ffebef;
+}
+.lightgreen-cell {
+  background-color: #ecffeb;
+}
+.lightpink-cell {
+  background-color: #ffe6f0;
+}
+.lightyellow-cell {
+  background-color: #fff9e7;
+}
+.lightblue-cell {
+  background-color: #eaf3ff;
+}
+.hour-col {
+  background-color: #fafafa;
+  font-weight: 700;
+}
+
+/*
+   STUDENT PROFILE BOXES
+*/
+.profile-box {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+/*
+   LOGIN PAGE
+*/
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+.login-box {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.login-box h2 {
+  margin-bottom: 1rem;
+}
+.login-box label {
+  display: block;
+  margin-top: 0.5rem;
+}
+.login-box input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.login-box button {
+  width: 100%;
+  padding: 0.7rem;
+  background: #2c3e50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.login-box button:hover {
+  background: #324e63;
+}
+.error-msg {
+  background: #ffe6e6;
+  padding: 0.5rem;
+  color: #b71c1c;
+  margin-bottom: 0.75rem;
+  border-radius: 4px;
+}
