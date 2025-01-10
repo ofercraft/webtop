@@ -48,7 +48,8 @@ def get_grades1(cookies, student_id):
                     "subject": i["subject"],
                     "exam_type": i["type"],
                     "grade": i["grade"],
-                    "notes": notes
+                    "notes": notes,
+                    "title": i["title"]
                 }
             )
 
