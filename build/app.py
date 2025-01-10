@@ -188,7 +188,7 @@ def schedule():
 
     # Convert the dictionary back to RequestsCookieJar
     cookies = requests.utils.cookiejar_from_dict(loaded_cookies_dict)
-    return render_template("schedule.html", schedule_data=get_schedule(session.get("cookies"), session.get("class_code"), session.get("institution")), session=session)
+    return render_template("schedule.html", schedule_data=get_schedule(cookies, session.get("class_code"), session.get("institution")), session=session)
 
 @app.route("/grades")
 @login_required
