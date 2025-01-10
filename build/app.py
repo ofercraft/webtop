@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from webtop3 import WebtopUser, validate_login, get_grades1
+import requests
+import json
 app = Flask(__name__)
 app.secret_key = "YOUR_SECRET_KEY_HERE"  # Replace with a strong random string
 
@@ -140,7 +142,11 @@ def login():
         if req[1]=="fine":
             session["logged_in"] = True
             session["username"] = username
-            session["cookies"]=req[2][0]
+            cookies_dict = requests.utils.dict_from_cookiejar(req[2][0])
+
+            # Serialize to JSON
+            cookies_json = json.dumps(cookies_dict)
+            session["cookies"]=cookies_json
             session["student_id"]=req[2][1]
 
             # session["student_id"]=req[3]
@@ -183,7 +189,11 @@ def schedule():
 @app.route("/grades")
 @login_required
 def grades():
-    grades_list = get_grades1(session.get("info")[0], session.get("info")[1])
+    loaded_cookies_dict = json.loads(session.get("cookies"))
+
+    # Convert the dictionary back to RequestsCookieJar
+    cookies = requests.utils.cookiejar_from_dict(loaded_cookies_dict)
+    grades_list = get_grades1(cookies, session.get("info")[1])
     return render_template("grades.html", grades_data=grades_list)
 
 @app.route("/attendance")
