@@ -10,11 +10,5 @@ urllib3==1.26.15
 # Cryptography
 pycryptodome==3.17
 
-# Date and time handling
-datetime  # No need to add, built into Python
-
-# JSON handling
-json  # No need to add, built into Python
-
 # Other
 certifi==2023.7.22
