@@ -136,12 +136,13 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        req = validate_login(username, password)[1]
-        if req=="fine":
+        req = validate_login(username, password)
+        if req[1]=="fine":
             session["logged_in"] = True
             session["username"] = username
+            session["user"]=WebtopUser(username, password)
             return redirect(url_for("home"))
-        elif req=="wrong":
+        elif req[1]=="wrong":
             error_msg = "שם המשתמש או הסיסמה שגויים"
             return render_template("login.html", error=error_msg)
         else:
@@ -175,7 +176,8 @@ def schedule():
 @app.route("/grades")
 @login_required
 def grades():
-    return render_template("grades.html", grades_data=grades_data)
+    grades_list = session.get("user").get_grades()
+    return render_template("grades.html", grades_data=grades_list)
 
 @app.route("/attendance")
 @login_required
