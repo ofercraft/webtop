@@ -193,7 +193,7 @@ def grades():
 
     # Convert the dictionary back to RequestsCookieJar
     cookies = requests.utils.cookiejar_from_dict(loaded_cookies_dict)
-    grades_list = get_grades1(cookies, session.get("info")[1])
+    grades_list = get_grades1(cookies, session.get("student_id"))
     return render_template("grades.html", grades_data=grades_list)
 
 @app.route("/attendance")
