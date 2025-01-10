@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from webtop3 import WebtopUser, validate_login, get_grades1
+from webtop3 import WebtopUser, validate_login, get_grades1, get_schedule
 import requests
 import json
 app = Flask(__name__)
@@ -150,9 +150,9 @@ def login():
             session["student_id"]=req[2][1]
 
             # session["student_id"]=req[3]
-            # session["info"]=req[4]
-            # session["class_code"]=req[5]
-            # session["institution"]=req[6]
+            #session["info"]=req[4]
+            session["class_code"]=req[2][3]
+            session["institution"]=req[2][4]
 
             return redirect(url_for("home"))
         elif req[1]=="wrong":
@@ -184,7 +184,11 @@ def home():
 @app.route("/schedule")
 @login_required
 def schedule():
-    return render_template("schedule.html", schedule_data=schedule_data)
+    loaded_cookies_dict = json.loads(session.get("cookies"))
+
+    # Convert the dictionary back to RequestsCookieJar
+    cookies = requests.utils.cookiejar_from_dict(loaded_cookies_dict)
+    return render_template("schedule.html", schedule_data=get_schedule(cookies, session.get("class_code"), session.get("institution")), session=session)
 
 @app.route("/grades")
 @login_required
