@@ -71,7 +71,7 @@ def validate_login(username: str, password: str):
         return False, "wrong", None
     return True, "fine", cookies
 class WebtopUser:
-    def __init__(self, username: str, password: str):
+    def __init__(self, username: str, password: str="cookies"):
         """
         an unofficial webtop api, to get much information like: grades, schedule, average, and more.
         this function initialises a webtop user,
@@ -83,30 +83,33 @@ class WebtopUser:
         Returns:
             None.
         """
+        if(password=="cookies"):
+            self.cookies = username
+        else:
 
-        data = encrypt_string_to_server(f"{username}0")  # encrypt the username to give to the database.
+            data = encrypt_string_to_server(f"{username}0")  # encrypt the username to give to the database.
 
-        url = "https://webtopserver.smartschool.co.il/server/api/user/LoginByUserNameAndPassword"
-        data = {  # the request parameters.
-            "Data": data,
-            "UserName": username,
-            "Password": password,
-            "deviceDataJson": '{"isMobile":false,"isTablet":false,"isDesktop":true}'
+            url = "https://webtopserver.smartschool.co.il/server/api/user/LoginByUserNameAndPassword"
+            data = {  # the request parameters.
+                "Data": data,
+                "UserName": username,
+                "Password": password,
+                "deviceDataJson": '{"isMobile":false,"isTablet":false,"isDesktop":true}'
 
-        }
-        response = requests.post(url, json=data,
-                                 verify=False)  # send the request, and get the response and the cookie
-        try:
-            if response.json()["status"]:
-                self.student_id = response.json()["data"]["userId"]  # pull the student id from the response json
-                self.cookies = response.cookies  # get the response cookies.
-                self.info = response.json()["data"]  #get info about the user, from the response.
-                self.class_code = f"{response.json()['data']['classCode']}|{str(response.json()['data']['classNumber'])}"
-                self.institution = response.json()["data"]["institutionCode"]
-            else:
+            }
+            response = requests.post(url, json=data,
+                                     verify=False)  # send the request, and get the response and the cookie
+            try:
+                if response.json()["status"]:
+                    self.student_id = response.json()["data"]["userId"]  # pull the student id from the response json
+                    self.cookies = response.cookies  # get the response cookies.
+                    self.info = response.json()["data"]  # get info about the user, from the response.
+                    self.class_code = f"{response.json()['data']['classCode']}|{str(response.json()['data']['classNumber'])}"
+                    self.institution = response.json()["data"]["institutionCode"]
+                else:
+                    raise Except()
+            except:
                 raise Except()
-        except:
-            raise Except()
 
     def login_get_info(self):
         """
