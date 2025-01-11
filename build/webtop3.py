@@ -38,8 +38,9 @@ def get_schedule(cookies, grade, institution):
         "typeView": 2
     }
     colors={"מתמטיקה האצה": "lightgreen-cell", "מדעים": "lightyellow-cell",
-            "של``ח": "lightgreen-cell", "חינוך": "pink-cell", "arabic": "lightblue-cell", "היסטוריה": "lightred-cell",
-            "עברית": "lightpurple-cell", "חינוך גופני": "lightred-cell", "נחשון": "lightyellow-cell", "ספרות": "lightgrey-cell", "תנ``ך": "lightgrey-cell"
+            "של``ח": "lightgreen-cell", "חינוך": "pink-cell", "ערבית": "lightblue-cell", "היסטוריה": "lightred-cell",
+            "עברית": "lightpurple-cell", "חינוך גופני": "lightred-cell", "נחשון": "lightyellow-cell", "ספרות": "lightgrey-cell",
+            "תנ``ך": "lightgrey-cell"
     }
     print(type(cookies))
 
@@ -48,7 +49,7 @@ def get_schedule(cookies, grade, institution):
 
     # Convert the dictionary into a RequestsCookieJar
     #cookies_jar = requests.utils.cookiejar_from_dict(cookies_dict)
-    
+
     response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
     #print(response.json())
     schedule = [
@@ -73,6 +74,10 @@ def get_schedule(cookies, grade, institution):
         ],
         [
         ],
+        [
+        ],
+        [
+        ],
 
     ]
     Except(response.json())
@@ -87,6 +92,10 @@ def get_schedule(cookies, grade, institution):
                     color = "lightyellow-cell"
                 #print(hour["hour"]-1)
                 schedule[hour["hour"]-1].append((hour["scheduale"][0]["subject"], hour["scheduale"][0]["teacherPrivateName"]+" "+hour["scheduale"][0]["teacherLastName"],  color))
+            else:
+                print(hour["hour"]-1)
+                schedule[hour["hour"]-1].append((" ", "", "white-cell"))
+
     return schedule  # Return the schedule.
 
 
