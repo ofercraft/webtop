@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from webtop3 import WebtopUser, validate_login, get_grades1, get_schedule
+from webtop3 import WebtopUser, validate_login, get_grades1, get_schedule, get_attendance
 import requests
 import json
 app = Flask(__name__)
@@ -153,6 +153,7 @@ def login():
             #session["info"]=req[4]
             session["class_code"]=req[2][3]
             session["institution"]=req[2][4]
+            session["name"]=req[2][5]
 
             return redirect(url_for("home"))
         elif req[1]=="wrong":
@@ -175,11 +176,16 @@ def logout():
 # Protected Routes
 ##############################################################################
 
-@app.route("/home")
+@app.route("/home", subdomain='api')
 @login_required
 def home():
     user_name = session.get("username", "משתמש")
-    return render_template("index.html", username=user_name)
+    updates = [
+        "ביטול שיעור (8) 10/01/2025 בשל אירוע חירום",
+        "שינוי חדר למידה (4) 09/01/2025 - מתמטיקה הנדסה",
+        "מבחן מתמטיקה הנדסה ב-15/01/2025"
+    ]
+    return render_template("index.html", username=session.get("name"), updates=updates)
 
 @app.route("/schedule")
 @login_required
@@ -203,6 +209,11 @@ def grades():
 @app.route("/attendance")
 @login_required
 def attendance():
+    loaded_cookies_dict = json.loads(session.get("cookies"))
+
+    # Convert the dictionary back to RequestsCookieJar
+    cookies = requests.utils.cookiejar_from_dict(loaded_cookies_dict)
+    attendance_data = get_attendance(cookies, session.get("student_id"))
     return render_template("attendance.html", attendance_data=attendance_data)
 
 @app.route("/student_profile")
