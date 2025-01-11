@@ -18,6 +18,94 @@ import base64
 import webbrowser
 
 
+def convert_iso_to_date_and_day(iso_date_string):
+    """
+    Convert a date string in the ISO format 'YYYY-MM-DDTHH:MM:SS'
+    to a readable date format 'DD-MM-YYYY' and return the Hebrew day name.
+    """
+    # Define Hebrew day names (Sunday to Saturday)
+    hebrew_days = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"]
+
+    try:
+        # Split the date string to separate date and time
+        date_part, _ = iso_date_string.split("T")  # Ignore the time part
+
+        # Split the date part into year, month, and day
+        year, month, day = map(int, date_part.split("-"))
+
+        # Basic validation
+        if not (1 <= month <= 12):
+            return "Invalid date: month must be between 1 and 12."
+        if not (1 <= day <= 31):  # Simplified day validation
+            return "Invalid date: day must be between 1 and 31."
+
+        # Calculate the day of the week (0 = Monday, 6 = Sunday)
+        # Zeller's Congruence Algorithm (Adjusted for ISO Weekday)
+        q = day
+        m = month if month > 2 else month + 12
+        K = year % 100 if month > 2 else (year - 1) % 100
+        J = year // 100 if month > 2 else (year - 1) // 100
+
+        weekday_index = (q + ((13 * (m + 1)) // 5) + K + (K // 4) + (J // 4) - (2 * J)) % 7
+        weekday_index = (weekday_index + 6) % 7  # Adjust to make 0 = Sunday, 6 = Saturday
+
+        # Get the Hebrew day name
+        hebrew_day_name = hebrew_days[weekday_index]
+
+        # Return the formatted date and the Hebrew day name
+        formatted_date = f"{day:02d}-{month:02d}-{year}"
+        return {
+            "day": day,
+            "month": month,
+            "year": year,
+            "formatted_date": formatted_date,
+            "hebrew_day_name": hebrew_day_name
+        }
+    except ValueError:
+        return "Invalid ISO date format. Please use 'YYYY-MM-DDTHH:MM:SS'."
+
+
+
+def get_attendance(cookies, student_id, period="a"):
+    """
+    Get a webtop user's discipline events.
+
+    Args:
+        self: The user object.
+        period (string): The year period (a, b, or ab).
+
+    Returns:
+        dict: Containing all the user's decline events in the following form:
+              [{'type': string, 'date': string, 'subject': string}...]
+    """
+
+    if period not in ("a", "b", "ab"):
+        raise Except(message="the period must be a, b, or ab")
+
+    period_id = 1103 if period == "a" else 1102 if period == "b" else 0
+    print(period_id)
+
+    url = "https://webtopserver.smartschool.co.il/server/api/PupilCard/GetPupilDiciplineEvents"
+    data = dict(studentID=student_id, moduleID=11, periodID=period_id)
+    response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
+    events_data = response.json()["data"]["diciplineEvents"]
+
+    attendance_data = [
+    ]
+    for item in events_data:
+
+        attendance_data.append({
+            "date": item["eventDate"][:10],
+            "day": "יום " + convert_iso_to_date_and_day(item["eventDate"])['hebrew_day_name'],
+            "hour": item["hourNum"],
+            "group": item["teacherName"] + " - " + item["subjectName"],
+            "event_type": item["eventType"],
+            "justification": item["justifiedRemark"],
+            "comments": item["justifiedRemark"],
+        })
+
+    return attendance_data
+
 def get_schedule(cookies, grade, institution):
     """
     Get a webtop user's weekly schedule, including this week's changes.
@@ -187,13 +275,15 @@ def validate_login(username: str, password: str):
         info = response.json()["data"]  # get info about the user, from the response.
         class_code = f"{response.json()['data']['classCode']}|{str(response.json()['data']['classNumber'])}"
         institution = response.json()["data"]["institutionCode"]
+        #print(response.json())
+        name = response.json()["data"]["firstName"] + " " + response.json()["data"]["lastName"]
     except Exception as e:
         print(f"An exception occurred: {e}")
 
         return False, "error", None
     if (response.json()["errorDescription"]=="User Name or Password incorrect"):
         return False, "wrong", None
-    return True, "fine", [cookies, student_id, info, class_code, institution]
+    return True, "fine", [cookies, student_id, info, class_code, institution, name]
 
 class WebtopUser:
     def __init__(self, username, password: str="cookies"):
@@ -359,7 +449,7 @@ class WebtopUser:
         grades: list = self.get_grades_list(period=period)  #get the grades.
         return sum(grades) / len(grades)  #return the average.
 
-    def get_discipline_events(self, period="b"):
+    def get_discipline_events(self, period="a"):
         """
         Get a webtop user's discipline events.
 
@@ -385,6 +475,7 @@ class WebtopUser:
 
         events = {}
         for item in events_data:
+            print(item)
             event_type = item["eventType"]
             event_info = {"type": event_type, "date": item["eventDate"], "subject": item["subjectName"]}
             events.setdefault(event_type, []).append(event_info)
@@ -720,56 +811,56 @@ class WebtopUser:
 
 
 if __name__ == "__main__":
-    info = validate_login("ETD395", "Adaradir11")
-    print(    get_schedule(info[2][1], info[2][3], info[2][4])
-)
-    # username = input("enter username -->\n")
-    # if username == "" or username == "ofer":
-    #     username = "AHYC52"
-    # password = input("enter password -->\n")
-    # if password == "" or password == "ofer":
-    #     password = "Neches90210"
-    #
-    # user = WebtopUser(username, password)
-    # print("0: done\n"
-    #       "1: get info\n"
-    #       "2: get grades\n"
-    #       "3: get average\n"
-    #       "4: get final grades\n"
-    #       "5: get notes\n"
-    #       "6: get homeroom notes\n"
-    #       "7: get schedule\n"
-    #       "8: get changes\n"
-    #       "9: get schedule pdf\n"
-    #       "10: get messages\n"
-    #       "11: get grades list\n"
-    #       "12: get discipline events")
-    # while True:
-    #
-    #     task = int(input("select task"))
-    #     if task == 0:
-    #         break
-    #     elif task == 1:
-    #         print(user.login_get_info())
-    #     elif task == 2:
-    #         print(user.get_grades1())
-    #     elif task == 3:
-    #         print(user.get_average())
-    #     elif task == 4:
-    #         print(user.get_final_grades())
-    #     elif task == 5:
-    #         print(user.get_notes())
-    #     elif task == 6:
-    #         print(user.get_homeroom_notes())
-    #     elif task == 7:
-    #         print(user.get_schedule())
-    #     elif task == 8:
-    #         print(user.get_changes())
-    #     elif task == 9:
-    #         print(user.get_schedule_pdf())
-    #     elif task == 10:
-    #         print(user.get_messages())
-    #     elif task == 11:
-    #         print(user.get_grades_list())
-    #     elif task == 12:
-    #         print(user.get_discipline_events())
+     info = validate_login("ETD395", "Adaradir11")
+#     print(    get_schedule(info[2][1], info[2][3], info[2][4])
+# )
+#     username = input("enter username -->\n")
+#     if username == "" or username == "ofer":
+#         username = "AHYC52"
+#     password = input("enter password -->\n")
+#     if password == "" or password == "ofer":
+#         password = "Neches90210"
+#
+#     user = WebtopUser(username, password)
+#     print("0: done\n"
+#           "1: get info\n"
+#           "2: get grades\n"
+#           "3: get average\n"
+#           "4: get final grades\n"
+#           "5: get notes\n"
+#           "6: get homeroom notes\n"
+#           "7: get schedule\n"
+#           "8: get changes\n"
+#           "9: get schedule pdf\n"
+#           "10: get messages\n"
+#           "11: get grades list\n"
+#           "12: get discipline events")
+#     while True:
+#
+#         task = int(input("select task"))
+#         if task == 0:
+#             break
+#         elif task == 1:
+#             print(user.login_get_info())
+#         elif task == 2:
+#             print(user.get_grades1())
+#         elif task == 3:
+#             print(user.get_average())
+#         elif task == 4:
+#             print(user.get_final_grades())
+#         elif task == 5:
+#             print(user.get_notes())
+#         elif task == 6:
+#             print(user.get_homeroom_notes())
+#         elif task == 7:
+#             print(user.get_schedule())
+#         elif task == 8:
+#             print(user.get_changes())
+#         elif task == 9:
+#             print(user.get_schedule_pdf())
+#         elif task == 10:
+#             print(user.get_messages())
+#         elif task == 11:
+#             print(user.get_grades_list())
+#         elif task == 12:
+#             print(user.get_discipline_events())
