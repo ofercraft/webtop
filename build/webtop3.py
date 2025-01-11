@@ -268,19 +268,15 @@ def validate_login(username: str, password: str):
         "deviceDataJson": '{"isMobile":true,"isTablet":false,"isDesktop":false,"getDeviceType":"Mobile","os":"Android","osVersion":"6.0","browser":"Chrome","browserVersion":"122.0.0.0","browserMajorVersion":122,"screen_resolution":"1232 x 840","cookies":true,"userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"}'
 
     }
-    try:
-        response = requests.post(url, json=data, verify=False)
-        cookies = response.cookies  # get the response cookies.
-        student_id = response.json()["data"]["userId"]  # pull the student id from the response json
-        info = response.json()["data"]  # get info about the user, from the response.
-        class_code = f"{response.json()['data']['classCode']}|{str(response.json()['data']['classNumber'])}"
-        institution = response.json()["data"]["institutionCode"]
-        #print(response.json())
-        name = response.json()["data"]["firstName"] + " " + response.json()["data"]["lastName"]
-    except Exception as e:
-        print(f"An exception occurred: {e}")
+    response = requests.post(url, json=data, verify=False)
+    cookies = response.cookies  # get the response cookies.
+    student_id = response.json()["data"]["userId"]  # pull the student id from the response json
+    info = response.json()["data"]  # get info about the user, from the response.
+    class_code = f"{response.json()['data']['classCode']}|{str(response.json()['data']['classNumber'])}"
+    institution = response.json()["data"]["institutionCode"]
+    #print(response.json())
+    name = response.json()["data"]["firstName"] + " " + response.json()["data"]["lastName"]
 
-        return False, "error", None
     if (response.json()["errorDescription"]=="User Name or Password incorrect"):
         return False, "wrong", None
     return True, "fine", [cookies, student_id, info, class_code, institution, name]
