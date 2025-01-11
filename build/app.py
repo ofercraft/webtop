@@ -176,7 +176,7 @@ def logout():
 # Protected Routes
 ##############################################################################
 
-@app.route("/home", subdomain='api')
+@app.route("/home")
 @login_required
 def home():
     user_name = session.get("username", "משתמש")
