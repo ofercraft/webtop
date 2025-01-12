@@ -180,10 +180,7 @@ def logout():
 @login_required
 def home():
     user_name = session.get("username", "משתמש")
-    updates = [
-        "ביטול שיעור (8) 10/01/2025 בשל אירוע חירום",
-        "שינוי חדר למידה (4) 09/01/2025 - מתמטיקה הנדסה",
-        "מבחן מתמטיקה הנדסה ב-15/01/2025"
+    updates = ["אין עדכונים להיום "
     ]
     return render_template("index.html", username=session.get("name"), updates=updates)
 
