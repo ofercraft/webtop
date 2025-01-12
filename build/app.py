@@ -100,17 +100,17 @@ attendance_data = [
 ]
 
 student_info = {
-    "name": "פלדמן אופיר",
-    "id": "123456789",
-    "phone": "050-123-4567",
-    "address": "רחוב הדוגמה 10, עיר דוגמה",
-    "class": "ח'3 - תשפ\"ה"
+    "name": "",
+    "id": "",
+    "phone": "",
+    "address": "",
+    "class": ""
 }
 parents_info = {
-    "father_name": "יוסי פלדמן",
-    "father_phone": "050-111-2222",
-    "mother_name": "רינה אופיר",
-    "mother_phone": "052-333-4444"
+    "father_name": "",
+    "father_phone": "",
+    "mother_name": "",
+    "mother_phone": ""
 }
 
 
