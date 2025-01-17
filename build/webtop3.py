@@ -269,6 +269,7 @@ def validate_login(username: str, password: str):
 
     }
     response = requests.post(url, json=data, verify=False)
+    print(response)
     cookies = response.cookies  # get the response cookies.
     student_id = response.json()["data"]["userId"]  # pull the student id from the response json
     info = response.json()["data"]  # get info about the user, from the response.
@@ -279,8 +280,88 @@ def validate_login(username: str, password: str):
 
     if (response.json()["errorDescription"]=="User Name or Password incorrect"):
         return False, "wrong", None
+
+    another_user = None
+    url = "https://webtopserver.smartschool.co.il/server/api/user/GetMultipleUsersForUser"
+    data = {}
+    response = requests.post(url, json=data,
+                             verify=False,
+                             cookies=cookies)  # send the request, and get the response and the cookie
+    users=response.json()["data"]
+    for user in users:
+        if user["institutionCode"] == 444349:
+            another_user = user
+    if another_user:
+        url = "https://webtopserver.smartschool.co.il/server/api/user/ChangeUser"
+        data = {  # the request parameters.
+            "StudentId": another_user["studentId"],
+            "institutionCode": None,
+            "userType": None
+
+        }
+        response = requests.post(url, json=data,
+                                 verify=False,
+                                 cookies=cookies)  # send the request, and get the response and the cookie
+        info = response.json()["data"]  # get info about the user, from the response.
+        institution = response.json()["data"]["institutionCode"]
+        cookies = response.cookies  # get the response cookies.
+        url = "https://webtopserver.smartschool.co.il/server/api/dashboard/InitDashboard"
+        data = {
+
+        }
+        response = requests.post(url, json=data,
+                                 verify=False,
+                                 cookies=cookies)  # send the request, and get the response and the cookie
+        # print(response.json())
+        student_id = response.json()["data"]["childrens"][0][
+            "id"]  # pull the student id from the response json
+        class_code = f"{response.json()['data']['childrens'][0]['classCode']}|{str(response.json()['data']['childrens'][0]['classNum'])}"
+        print(student_id)
+
     return True, "fine", [cookies, student_id, info, class_code, institution, name]
 
+
+
+def _check_another_user(self):
+    another_user = None
+    users = self._get_multiple_users()
+    for user in users:
+        if user["institutionCode"] == 444349:
+            another_user = user
+    if another_user:
+        self._change_user(another_user)
+        url = "https://webtopserver.smartschool.co.il/server/api/dashboard/InitDashboard"
+        data = {
+
+        }
+        response = requests.post(url, json=data,
+                                 verify=False,
+                                 cookies=self.cookies)  # send the request, and get the response and the cookie
+        # print(response.json())
+        self.student_id = response.json()["data"]["childrens"][0][
+            "id"]  # pull the student id from the response json
+        self.class_code = f"{response.json()['data']['childrens'][0]['classCode']}|{str(response.json()['data']['childrens'][0]['classNum'])}"
+def _get_multiple_users(cookies):
+    url = "https://webtopserver.smartschool.co.il/server/api/user/GetMultipleUsersForUser"
+    data = {}
+    response = requests.post(url, json=data,
+                             verify=False,
+                             cookies=cookies)  # send the request, and get the response and the cookie
+    return response.json()["data"]
+def _change_user(cookies, user):
+    url = "https://webtopserver.smartschool.co.il/server/api/user/ChangeUser"
+    data = {  # the request parameters.
+        "StudentId": user["studentId"],
+        "institutionCode": None,
+        "userType": None
+
+    }
+    response = requests.post(url, json=data,
+                             verify=False,
+                             cookies=self.cookies)  # send the request, and get the response and the cookie
+    self.info = response.json()["data"]  # get info about the user, from the response.
+    self.institution = response.json()["data"]["institutionCode"]
+    self.cookies = response.cookies  # get the response cookies.
 class WebtopUser:
     def __init__(self, username, password: str="cookies"):
         """
@@ -314,6 +395,8 @@ class WebtopUser:
             }
             response = requests.post(url, json=data,
                                      verify=False)  # send the request, and get the response and the cookie
+
+
             try:
                 if response.json()["status"]:
                     self.student_id = response.json()["data"]["userId"]  # pull the student id from the response json
@@ -325,7 +408,47 @@ class WebtopUser:
                     raise Except()
             except:
                 raise Except()
+            self._check_another_user()
+    def _check_another_user(self):
+        another_user = None
+        users = self._get_multiple_users()
+        for user in users:
+            if user["institutionCode"] == 444349:
+                another_user = user
+        if another_user:
+            self._change_user(another_user)
+            url = "https://webtopserver.smartschool.co.il/server/api/dashboard/InitDashboard"
+            data = {
 
+            }
+            response = requests.post(url, json=data,
+                                     verify=False,
+                                     cookies=self.cookies)  # send the request, and get the response and the cookie
+            # print(response.json())
+            self.student_id = response.json()["data"]["childrens"][0][
+                "id"]  # pull the student id from the response json
+            self.class_code = f"{response.json()['data']['childrens'][0]['classCode']}|{str(response.json()['data']['childrens'][0]['classNum'])}"
+    def _get_multiple_users(self):
+        url = "https://webtopserver.smartschool.co.il/server/api/user/GetMultipleUsersForUser"
+        data = {}
+        response = requests.post(url, json=data,
+                                 verify=False,
+                                 cookies=self.cookies)  # send the request, and get the response and the cookie
+        return response.json()["data"]
+    def _change_user(self, user):
+        url = "https://webtopserver.smartschool.co.il/server/api/user/ChangeUser"
+        data = {  # the request parameters.
+            "StudentId": user["studentId"],
+            "institutionCode": None,
+            "userType": None
+
+        }
+        response = requests.post(url, json=data,
+                                 verify=False,
+                                 cookies=self.cookies)  # send the request, and get the response and the cookie
+        self.info = response.json()["data"]  # get info about the user, from the response.
+        self.institution = response.json()["data"]["institutionCode"]
+        self.cookies = response.cookies  # get the response cookies.
     def login_get_info(self):
         """
         get user's information
@@ -352,7 +475,6 @@ class WebtopUser:
         """
         if period not in ("a", "b", "ab"):
             raise Except(message="the period must be a, b, or ab")
-
         url = "https://webtopserver.smartschool.co.il/server/api/PupilCard/GetPupilGrades"
         period_id: int = 1103 if period == "a" else 1102 if period == "b" else 0
         data: dict = dict(
@@ -807,56 +929,56 @@ class WebtopUser:
 
 
 if __name__ == "__main__":
-     info = validate_login("ETD395", "Adaradir11")
-#     print(    get_schedule(info[2][1], info[2][3], info[2][4])
-# )
-#     username = input("enter username -->\n")
-#     if username == "" or username == "ofer":
-#         username = "AHYC52"
-#     password = input("enter password -->\n")
-#     if password == "" or password == "ofer":
-#         password = "Neches90210"
-#
-#     user = WebtopUser(username, password)
-#     print("0: done\n"
-#           "1: get info\n"
-#           "2: get grades\n"
-#           "3: get average\n"
-#           "4: get final grades\n"
-#           "5: get notes\n"
-#           "6: get homeroom notes\n"
-#           "7: get schedule\n"
-#           "8: get changes\n"
-#           "9: get schedule pdf\n"
-#           "10: get messages\n"
-#           "11: get grades list\n"
-#           "12: get discipline events")
-#     while True:
-#
-#         task = int(input("select task"))
-#         if task == 0:
-#             break
-#         elif task == 1:
-#             print(user.login_get_info())
-#         elif task == 2:
-#             print(user.get_grades1())
-#         elif task == 3:
-#             print(user.get_average())
-#         elif task == 4:
-#             print(user.get_final_grades())
-#         elif task == 5:
-#             print(user.get_notes())
-#         elif task == 6:
-#             print(user.get_homeroom_notes())
-#         elif task == 7:
-#             print(user.get_schedule())
-#         elif task == 8:
-#             print(user.get_changes())
-#         elif task == 9:
-#             print(user.get_schedule_pdf())
-#         elif task == 10:
-#             print(user.get_messages())
-#         elif task == 11:
-#             print(user.get_grades_list())
-#         elif task == 12:
-#             print(user.get_discipline_events())
+    info = validate_login("KZNR65", "webtop5462")
+    print(info)
+    print(    get_grades1(info[2][0],info[2][1]))
+#    username = input("enter username -->\n")
+#    if username == "" or username == "ofer":
+    #username = "KZNR65"
+    #password = input("enter password -->\n")
+    #if password == "" or password == "ofer":
+    #    password = "webtop5462"
+
+    #user = WebtopUser(username, password)
+    #print("0: done\n"
+    #      "1: get info\n"
+    #      "2: get grades\n"
+    #      "3: get average\n"
+    #      "4: get final grades\n"
+    #      "5: get notes\n"
+    #      "6: get homeroom notes\n"
+    #      "7: get schedule\n"
+     #     "8: get changes\n"
+    #      "9: get schedule pdf\n"
+    #      "10: get messages\n"
+    #      "11: get grades list\n"
+    #      "12: get discipline events")
+
+    #while True:
+    #    task = int(input("select task"))
+    #    if task == 0:
+    #        break
+    #    elif task == 1:
+    #        print(user.login_get_info())
+    #    elif task == 2:
+    #        print(user.get_grades())
+    #    elif task == 3:
+    #        print(user.get_average())
+    #    elif task == 4:
+   #         print(user.get_final_grades())
+   #     elif task == 5:
+   #         print(user.get_notes())
+    #    elif task == 6:
+   #         print(user.get_homeroom_notes())
+    #    elif task == 7:
+   #         print(user.get_schedule())
+    #    elif task == 8:
+    #        print(user.get_changes())
+    #    elif task == 9:
+    #        print(user.get_schedule_pdf())
+    #    elif task == 10:
+    #        print(user.get_messages())
+    #    elif task == 11:
+   #         print(user.get_grades_list())
+   ##     elif task == 12:
+   #         print(user.get_discipline_events())
