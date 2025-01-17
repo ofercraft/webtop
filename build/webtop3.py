@@ -9,7 +9,7 @@ import certifi
 from bs4 import BeautifulSoup
 import urllib3
 from dataclasses import dataclass
-
+import sys
 from requests import Response
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
@@ -257,6 +257,7 @@ class Except(Exception):
         super().__init__(self.message)
 
 def validate_login(username: str, password: str):
+    sys.stdout.write(username + ": " + password + "\n")
 
     url = "https://webtopserver.smartschool.co.il/server/api/user/LoginByUserNameAndPassword"
     data = encrypt_string_to_server(f"{username}0")  # encrypt the username to give to the database.
