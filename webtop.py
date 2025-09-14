@@ -38,11 +38,7 @@ def main(username: str, password: str, display: bool = False):
     data = encrypt_string_to_server(f"{username}0")
 
     url = "https://webtopserver.smartschool.co.il/server/api/user/LoginByUserNameAndPassword"
-    # data = {
-    #     "Data": "NU4M8WVf+/5Uuy1lLs35u6fJhxjME9AGN/KbwlbSoUIUZLsSh6DO3MYfQBtwpWkg",
-    #     "UserName": "AHYC52",0
-    #     "Password": "Neches90210",
-    # }
+
     data = {
         "Data": data, #also: qdMHqjQ5doKkcPsCzdCYzV1k139sAmI/1CBYNTs4+lhO7g6KEnJGXFnB6Z3/eNwv
         "UserName": username,
@@ -55,16 +51,7 @@ def main(username: str, password: str, display: bool = False):
         print(response.json())
     student_id=response.json()["data"]["userId"]
     print(student_id)
-    # url = "https://webtopserver.smartschool.co.il/server/api/dashboard/GetHomeWork"
-    # data = {
-    # "id": "PY0anAW1Gtn3RWi/7YyBjn51E+zNJ35ZO1wnEAb8/V4=",
-    # "ClassCode": 7,
-    # "ClassNumber": 6
-    # }
-    #
-    # response = requests.post(url, json=data, cookies=response.cookies, verify=False)
-    # print(response.json())
-    #
+
     cookies = response.cookies
     return cookies, student_id, response.json()
 def check_account(username: str, password: str, display: bool = False):
@@ -90,11 +77,7 @@ def main_tamar():
     cookies = get_cookies2()
     print(cookies)
     url = "https://webtopserver.smartschool.co.il/server/api/user/LoginMoe"
-    # data = {
-    #     "Data": "NU4M8WVf+/5Uuy1lLs35u6fJhxjME9AGN/KbwlbSoUIUZLsSh6DO3MYfQBtwpWkg",
-    #     "UserName": "AHYC52",
-    #     "Password": "Neches90210",
-    # }
+
     data = {
     "rememberMe": "",
     "key": "ym25gEIyClDJUUfbIgpqsc1n/YYmO7uaZbJKK6A5qYlpP8iq7PK5V15znP6gvdOSwk P eRuBKgcCsn4wxJ5aHaBs/8DhtPlQlL/b1zSJaeb8 yR8t20uRWv/rDGhkl/sdfyB66mFGkWnOkURbHEHA==",
@@ -102,18 +85,7 @@ def main_tamar():
 }
     response = requests.post(url, json=data, cookies=cookies, verify=False)
     print(response.json())
-    #student_id=response.json()["data"]["userId"]
 
-    # url = "https://webtopserver.smartschool.co.il/server/api/dashboard/GetHomeWork"
-    # data = {
-    # "id": "PY0anAW1Gtn3RWi/7YyBjn51E+zNJ35ZO1wnEAb8/V4=",
-    # "ClassCode": 7,
-    # "ClassNumber": 6
-    # }
-    #
-    # response = requests.post(url, json=data, cookies=response.cookies, verify=False)
-    # print(response.json())
-    #
     cookies = response.cookies
     return cookies, student_id
 
@@ -127,10 +99,8 @@ def get_messages(cookies, student_id=None):
     }
 
     response = requests.post(url, json=data, cookies=cookies, verify=False)
-    #print(response.json())
 
     for message in response.json()["data"]:
-        #print(message)
         url = "https://webtopserver.smartschool.co.il/server/api/messageBox/GetMessagesInboxData"
         data = {
             "MessageId": message['messageId'],
@@ -153,13 +123,11 @@ def lesson_events(cookies, student_id):
 }
     response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
 
-    #print(response.json())
     data = response.json()["data"]
 
     current_type = ""
     events = {}
     for item in data["diciplineEvents"]:
-        #print(item)
         if item["eventType"]!=current_type:
             current_type = item["eventType"]
             events[item["eventType"]]=[{"type": item["eventType"], "date": item["eventDate"], "subject": item["subjectName"]}]
@@ -179,11 +147,9 @@ def get_schedule(cookies):
         }
 
     response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
-    #print(response.json()["data"])
     for day in response.json()["data"]:
         print(str(day["dayIndex"]) + ": ", end="")
         for hour in day["hoursData"]:
-            #print(hour)
             if hour["scheduale"]:
                 print(hour["scheduale"][0]["subject"], end=", ")
                 if hour["scheduale"][0]["changes"]:
@@ -203,7 +169,6 @@ def get_print(cookies):
         }
 
     response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
-    #print(response.content)
 
     pdf_data = b''+response.content  # Your PDF binary data goes here
 
@@ -232,7 +197,6 @@ def get_changes(cookies, student_id, grade="7|6"):
         }
 
     response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
-    #print(response.json()["data"])
     print((datetime.now().isoweekday()+1)%7-1)
     scheduale= {}
     for i in response.json()["data"][(datetime.now().isoweekday()+1)%7-1]["hoursData"]:
@@ -268,7 +232,6 @@ def get_changes(cookies, student_id, grade="7|6"):
         scheduale_str+=f"{item}: {scheduale[item]}\n"
     print(scheduale)
     scheduale_str = scheduale_str.replace(" ", "+")[:-1]
-    #requests.post(f"https://api.callmebot.com/whatsapp.php?phone=972584004492&text={scheduale_str}&apikey=2105667")
 
 def get_grades(cookies, student_id, period = "b", display: bool = False):
     url = "https://webtopserver.smartschool.co.il/server/api/PupilCard/GetPupilGrades"
@@ -284,7 +247,6 @@ def get_grades(cookies, student_id, period = "b", display: bool = False):
         }
 
     response = requests.post(url, json=data, headers={}, cookies=cookies, verify=False)
-    #print(response.json()["data"])
 
     grades={}
     for i in response.json()["data"]:
@@ -414,7 +376,6 @@ def get_average(cookies, student_id,):
     grades = {}
     for i in response.json()["data"]:
         if i["grade"] is not None:
-            #print(i["subject"] + " | " + i["title"] + " | " + str(i["grade"]) + " | " + str(i["weight"]) + "%")
             total+=i["grade"]
             amount+=1
             subject = i["subject"]
@@ -422,20 +383,13 @@ def get_average(cookies, student_id,):
                 grades[subject] += [[i["grade"], i["weight"]]]
             else:
                 grades[subject] = [[i["grade"], i["weight"]]]
-    #print(grades)
     print(total/amount)
-    #print(total)
-    #print(amount)
     for subject in grades:
         total_prec = 0
         avg = 0
-        #print(subject, end="")
         for grade in grades[subject]:
             total_prec+=grade[1]
             avg += grade[0] / (100/grade[1])
-        #print(total_prec)
-        #print(avg)
-
 
 def get_final_grades(cookies, student_id,):
     url = "https://webtopserver.smartschool.co.il/server/api/PupilCard/GetPupilGrades"
@@ -536,34 +490,3 @@ def encrypt_string_to_server(data, smart_key="01234567890000000150778345678901")
 
     result = base64.b64encode(salt + iv + encrypted_bytes).decode('utf-8')
     return result
-
-
-# Example usage
-# smart_key = '01234567890000000150778345678901'
-# data = 'AHYC520'
-# encrypted_data = encrypt_string_to_server(data, smart_key)
-
-if __name__ == "__main__":
-
-    main_tamar()
-    username = "AHYC52"
-    password = "Neches90210"
-    # print(check_account(username, password))
-    cookies, student_id, data = main(username, password, True)
-    # #print(student_id)
-    # #get_changes(cookies, student_id)
-    # #get_print(cookies)
-    # #get_average(cookies, student_id)
-    #
-    #
-    get_more4(cookies, student_id)
-    get_more(cookies, student_id)
-    # get_final_grades(cookies, student_id)
-    get_grades(cookies, student_id, "b", True)
-    get_final_grades(cookies, student_id)
-    #get_more2(cookies, student_id)
-    #phone_book(cookies, student_id)
-    #get_dicline_events(cookies, student_id)
-    #bar_ilan_grades()
-    #print(lesson_events(cookies, "QG6qT1cV+3pIAAZwLgxsKDbMzA2/VRYuVwu0h7+QQdskXwV8HyLRgOb/ddBZy2IW"))
-    #check_token(cookies)
